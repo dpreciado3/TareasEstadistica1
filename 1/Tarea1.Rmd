@@ -1,10 +1,9 @@
 ---
 title: "Tarea 1"
 output:
-  html_notebook: default
-  html_document:
-    df_print: paged
+  html_document: default
   pdf_document: default
+  html_notebook: default
 ---
 
 # Inmuebles
@@ -79,5 +78,33 @@ Las de dispersión son:
 Además, el percentil 0.76 de los registros correspondientes a ventas del año 2005 es `r toString(Superficie_percentil76)`.
 
 ### Año con mayor ingreso
+
+```{r}
+BD_Inmuebles_1_Yr <- filter(BD_Inmuebles_1, Operación == "Alquiler")
+BD_Inmuebles_1_Yr$Fecha.Venta <- format(as.POSIXct(BD_Inmuebles_1_Yr$Fecha.Venta), "%Y")
+BD_Inmuebles_1_Ingresos_Anuales <- BD_Inmuebles_1_Yr %>% group_by(Fecha.Venta) %>% summarise(Ventas = sum(Precio.Venta))
+Max_Yr <- BD_Inmuebles_1_Ingresos_Anuales[which.max(BD_Inmuebles_1_Ingresos_Anuales$Ventas),1]
+```
+
+Por lo tanto el año con mayor ingreso fue `r toString(Max_Yr)`.
+
+### Boxplot Precio-Venta
+
+```{r}
+boxplot(data = BD_Inmuebles_1_Yr, Precio.Venta ~ Fecha.Venta, xlab = "Año", ylab = "Precio")
+```
+
+### Coeficiente de correlación
+
+```{r}
+BD_Inmuebles_1_Venta <- filter(BD_Inmuebles_1, Operación == "Venta")
+BD_Inmuebles_1_Alquiler <- filter(BD_Inmuebles_1, Operación == "Alquiler")
+Cor_Superficie_Precio_Venta <- cor(BD_Inmuebles_1_Venta$Superficie, BD_Inmuebles_1_Venta$Precio.Venta)
+Cor_Superficie_Precio_Alquiler <- cor(BD_Inmuebles_1_Alquiler$Superficie, BD_Inmuebles_1_Alquiler$Precio.Venta)
+```
+
+Por lo tanto, el coeficiente de correlación entre las variables Superficie y Precio-Venta es de `r toString(Cor_Superficie_Precio_Venta)` en el caso de las operaciones de venta y `r toString(Cor_Superficie_Precio_Alquiler)` en el caso de las operaciones de alquiler.
+
+Considerando que el valor del coeficiente de correlación se mueve entre 0 y 1, diría que los valores obtenidos nos dicen que existe una correlación importante entre las variables.
 
 # Fútbol
