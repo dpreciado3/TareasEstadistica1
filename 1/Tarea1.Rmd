@@ -1,0 +1,84 @@
+---
+title: "Tarea 1"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+# Inmuebles
+
+```{r}
+library(readxl)
+BD_Inmuebles_1 <- read_excel("/home/dpreciado3/Documents/5O SEMESTRE/Estadistica/Tareas/1/BD-Inmuebles-1.xls", 
+    col_types = c("text", "text", "text", 
+        "numeric", "numeric", "date", "text", 
+        "text"))
+BD_Inmuebles_1 <- data.frame(BD_Inmuebles_1)
+```
+
+### Clasificación de variables
+
+-   Categóricas
+    -   Tipo de inmueble (nominal)
+    -   Operación (nominal)
+    -   Provincia (nominal)
+    -   Fecha venta (ordinal)
+    -   Vendedor (nominal)
+    -   Satisfacción (ordinal)
+-   Numéricas
+    -   Superficie (de razón)
+    -   Precio Venta (de razón)
+
+### Análisis de variable superficie
+
+```{r}
+# Medidas de tendencia central
+# Media
+Superficie_media <- mean(BD_Inmuebles_1$Superficie)
+# Mediana
+Superficie_mediana <- median(BD_Inmuebles_1$Superficie)
+# Moda
+# Dado que tratamos con una variable numérica, no tiene sentido poner la moda
+# Percentiles
+Superficie_percentiles <- quantile(BD_Inmuebles_1$Superficie)
+
+#Medidas de dispersión
+# Varianza
+Superficie_var <- var(BD_Inmuebles_1$Superficie)
+# Desviación estándar
+Superficie_std <- sd(BD_Inmuebles_1$Superficie)
+# Rango
+Superficie_rango <- max(BD_Inmuebles_1$Superficie) - min(BD_Inmuebles_1$Superficie)
+# Rango intercuartílico
+Superficie_rangointer <- quantile(BD_Inmuebles_1$Superficie, 0.75) - quantile(BD_Inmuebles_1$Superficie, 0.25)
+# Coeficiente de variación
+Superficie_cv <- (Superficie_std / Superficie_media) * 100
+
+# Percentil 0.76 de los registros del 2005
+library(dplyr)
+BD_Inmuebles_1_2005 <- BD_Inmuebles_1 %>% filter(between(Fecha.Venta, as.POSIXct('2005-01-01'), as.POSIXct('2005-12-31')))
+Superficie_percentil76 <- quantile(BD_Inmuebles_1_2005$Superficie, 0.76)
+```
+
+Por lo tanto, las medidas de tendencia central son:
+
+-   Media: `r toString(Superficie_media)`
+-   Mediana: `r toString(Superficie_mediana)`
+-   Percentiles: `r toString(Superficie_percentiles)`
+
+Las de dispersión son:
+
+-   Varianza: `r toString(Superficie_var)`
+-   Desviación estándar: `r toString(Superficie_std)`
+-   Rango: `r toString(Superficie_rango)`
+-   Rango intercuartílico: `r toString(Superficie_rangointer)`
+-   Coeficiente de variación: `r toString(Superficie_cv)`
+
+Además, el percentil 0.76 de los registros correspondientes a ventas del año 2005 es `r toString(Superficie_percentil76)`.
+
+### Año con mayor ingreso
+
+
+# Fútbol
