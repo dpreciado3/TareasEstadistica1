@@ -11,7 +11,7 @@ output:
 
 ```{r}
 library(readxl)
-BD_Inmuebles_1 <- read_excel("/home/dpreciado3/Documents/5O SEMESTRE/Estadistica/Tareas/1/BD-Inmuebles-1.xls", 
+BD_Inmuebles_1 <- read_excel("/home/dpreciado3/Documents/5O SEMESTRE/Estadistica/TareasEstadistica1/1/BD-Inmuebles-1.xls", 
     col_types = c("text", "text", "text", 
         "numeric", "numeric", "date", "text", 
         "text"))
@@ -79,6 +79,5 @@ Las de dispersión son:
 Además, el percentil 0.76 de los registros correspondientes a ventas del año 2005 es `r toString(Superficie_percentil76)`.
 
 ### Año con mayor ingreso
-
 
 # Fútbol
