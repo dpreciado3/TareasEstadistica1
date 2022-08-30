@@ -1,16 +1,22 @@
 ---
 title: "Tarea 1"
 output:
-  html_document: default
-  pdf_document: default
   html_notebook: default
+  pdf_document: default
+  html_document: default
 ---
+
+### Integrantes del equipo
+
+-   David Salvador Preciado Márquez
+-   Britny Brito Juárez
+-   América Itzel Vicente García
 
 # Inmuebles
 
 ```{r}
 library(readxl)
-BD_Inmuebles_1 <- read_excel("/home/dpreciado3/Documents/5O SEMESTRE/Estadistica/TareasEstadistica1/1/BD-Inmuebles-1.xls", 
+BD_Inmuebles_1 <- read_excel("BD-Inmuebles-1.xls", 
     col_types = c("text", "text", "text", 
         "numeric", "numeric", "date", "text", 
         "text"))
@@ -39,7 +45,7 @@ Superficie_media <- mean(BD_Inmuebles_1$Superficie)
 # Mediana
 Superficie_mediana <- median(BD_Inmuebles_1$Superficie)
 # Moda
-# Dado que tratamos con una variable numérica, no tiene sentido poner la moda
+# Dado que tratamos con una variable numérica continua, no tiene sentido poner la moda
 # Percentiles
 Superficie_percentiles <- quantile(BD_Inmuebles_1$Superficie)
 
@@ -65,7 +71,8 @@ Por lo tanto, las medidas de tendencia central son:
 
 -   Media: `r toString(Superficie_media)`
 -   Mediana: `r toString(Superficie_mediana)`
--   Percentiles: `r toString(Superficie_percentiles)`
+-   Moda: la omitimos porque estamos trabajando con una variable numérica continua.
+-   Percentiles (0%, 25%, 50%, 75%, 100%): `r toString(Superficie_percentiles)`
 
 Las de dispersión son:
 
@@ -94,6 +101,8 @@ Por lo tanto el año con mayor ingreso fue `r toString(Max_Yr)`.
 boxplot(data = BD_Inmuebles_1_Yr, Precio.Venta ~ Fecha.Venta, xlab = "Año", ylab = "Precio")
 ```
 
+Por el boxplot parece que en el año 2005 hubo algunas ventas un poco mayores. En general la media de ventas en cada año se mantiene relativamente estable, excepto en el año 2004 donde la media parece ser ligeramente menor.
+
 ### Coeficiente de correlación
 
 ```{r}
@@ -105,6 +114,147 @@ Cor_Superficie_Precio_Alquiler <- cor(BD_Inmuebles_1_Alquiler$Superficie, BD_Inm
 
 Por lo tanto, el coeficiente de correlación entre las variables Superficie y Precio-Venta es de `r toString(Cor_Superficie_Precio_Venta)` en el caso de las operaciones de venta y `r toString(Cor_Superficie_Precio_Alquiler)` en el caso de las operaciones de alquiler.
 
-Considerando que el valor del coeficiente de correlación se mueve entre 0 y 1, diría que los valores obtenidos nos dicen que existe una correlación importante entre las variables.
+Considerando que el valor del coeficiente de correlación se mueve entre -1 y 1, diría que los valores obtenidos nos dicen que existe una correlación positiva importante entre las variables (cuando una crece, la otra también).
 
 # Fútbol
+
+```{r}
+#importamos los datos
+library(readr)
+Futbol <- read.csv("Futbol.csv")
+Futbol <- data.frame(Futbol)
+
+
+#Manejamos los NA de los datos
+sum(is.na(Futbol))
+Futbol <- na.omit(Futbol)
+```
+
+### Clasificación de variables
+
+-   Categóricas
+    -   Any (ordinal)
+    -   Jornada (ordinal)
+    -   Partit.ID (ordinal)
+    -   Data (ordinal)
+    -   Local (nominal)
+    -   Visitant (nominal)
+-   Numéricas
+    -   GL (absoluta)
+    -   GV (absoluta)
+
+### Análisis de variable goles
+
+```{r}
+#Agregamos variable número total de goles
+Futbol$`Numero total de goles` <- Futbol$GL + Futbol$GV
+
+# Medidas de tendencia central
+# Media
+Total_goles_media <- mean(Futbol$`Numero total de goles`)
+# Mediana
+Total_goles_mediana <- median(Futbol$`Numero total de goles`)
+# Moda
+moda <- function(x) {
+  return(as.numeric(names(which.max(table(x)))))
+}
+Total_goles_moda <- moda(Futbol$`Numero total de goles`)
+# Percentiles
+Total_goles_percentiles <- quantile(Futbol$`Numero total de goles`)
+
+#Medidas de dispersión
+# Varianza
+Total_goles_var <- var(Futbol$`Numero total de goles`)
+
+# Desviación estándar
+Total_goles_std <- sd(Futbol$`Numero total de goles`)
+# Rango
+Total_goles_rango <- max(Futbol$`Numero total de goles`) - min(Futbol$`Numero total de goles`)
+# Rango intercuartílico
+Total_goles_rangointer <- quantile(Futbol$`Numero total de goles`, 0.75) - quantile(Futbol$`Numero total de goles`, 0.25)
+# Coeficiente de variación
+Total_goles_cv <- (Total_goles_std / Total_goles_media) * 100
+
+# Percentil 0.95 
+library(dplyr)
+Total_goles_percentil95 <- quantile(Futbol$`Numero total de goles`, 0.95)
+```
+
+Por lo tanto, las medidas de tendencia central son:
+
+-   Media: `r toString(Total_goles_media)`
+-   Mediana: `r toString(Total_goles_mediana)`
+-   Moda: `r toString(Total_goles_moda)`
+-   Percentiles (0%, 25%, 50%, 75%, 100%): `r toString(Total_goles_percentiles)`
+
+Las de dispersión son:
+
+-   Varianza: `r toString(Total_goles_var)`
+-   Desviación estándar: `r toString(Total_goles_std)`
+-   Rango: `r toString(Total_goles_rango)`
+-   Rango intercuartílico: `r toString(Total_goles_rangointer)`
+-   Coeficiente de variación: `r toString(Total_goles_cv)`
+
+Además, el percentil 0.95 es `r toString(Total_goles_percentil95 )`.
+
+El histograma sería
+
+```{r}
+hist(Futbol$`Numero total de goles`, main = paste(""),xlab = "Número total de goles", ylab = "Frecuencia")
+```
+
+Lo cual nos muestra que los partidos sin goles son mucho más comunes, y se van haciendo más infrecuentes mientras más goles ocurren. El boxplot sería
+
+```{r}
+boxplot(Futbol$`Numero total de goles`, ylab = "Número total de goles")
+```
+
+Que nos hace evidente que la media de goles es $2$, mientras que tenemos tres outliers con $9$, $10$ y $11$ goles.
+
+### Equipo que más goles anotó y recibió por cada año
+
+```{r}
+#Encontramos cuantos goles anotó y recibió cada equipo como visitante por año de jornada (Any)
+visitante <- Futbol %>% group_by(Any, Visitant) %>% summarise(anotadosVisitante = sum(GV), recibidosVisitante = sum(GL))
+
+#Encontramos cuantos goles anotó y recibió cada equipo como local por año de jornada (Any)
+local<- Futbol %>% group_by(Any, Local) %>% summarise(anotadosLocal = sum(GL), recibidosLocal = sum(GV))
+
+#Juntamos en un solo data frame la información previamente obtenida sobre goles anotados y recibidos 
+goles <- visitante
+goles$anotadosLocal <- local$anotadosLocal
+goles$recibidosLocal <- local$recibidosLocal
+
+#Encontramos cuantos goles anotó y recibió cada equipo en total por año de jornada (Any)
+golesT <- goles  %>% group_by(Any, Visitant) %>% summarise(recibidos = recibidosLocal + recibidosVisitante, 
+                             anotados = anotadosVisitante + anotadosLocal)
+
+#Encontramos el índice de los equipos que anotaron y recibieron más goles por año de jornada (Any)
+goles_Indice <- golesT  %>% group_by(Any) %>% summarise(masRecibidos = which.max(recibidos), masAnotados = which.max(anotados))
+
+#Encontramos los equipos que más anotaron y recibieron goles por año de jornada (Any)
+goles_Maximo <- data.frame(Any = goles_Indice$Any, masAnotados = golesT$Visitant[goles_Indice$masAnotados], 
+                           masRecibidos = golesT$Visitant[goles_Indice$masRecibidos])
+```
+
+Por lo tanto, por cada año de temporada obtenemos la siguiente tabla
+
+```{r}
+goles_Maximo
+```
+
+### Boxplot de goles por año
+
+```{r}
+boxplot(data = Futbol, `Numero total de goles` ~ Any, xlab = "Año", ylab = "Número de goles por partido")
+```
+
+En el año 13 el promedio de goles por partido tiende a ser mayor, pues existen más outliers y estos se encuentran más elevados, y sabemos que estos afectan de gran madera al promedio de ese año.
+
+### Coeficiente de correlación entre GL y GV
+
+```{r}
+Cor_Futbol_Goles <- cor(Futbol$GL, Futbol$GV)
+```
+
+Por lo tanto el coeficiente de correlación es `r toString(Cor_Futbol_Goles)`. Dado que el coeficiente de correlación varía en el intervalo $[-1, 1]$ y obtuvimos uno muy cercano a $0$, podemos decir que no existe ninguna correlación entre las variables (el valor de una no tiene ninguna influencia sobre el valor de la otra).
